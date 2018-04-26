@@ -28,11 +28,14 @@ socket.on('chat message', function(msg) {
 });
 
 socket.on('typing output', function(msg) {
+  typing.style.display = 'block';
   typing.innerHTML = msg;
+  window.scrollTo(0, document.body.scrollHeight);
 });   
 
 socket.on('clear typing', function() {
   typing.innerHTML = "";
+  typing.style.display = 'none';
 });   
 
 socket.on('welcome message', function(msg) {
@@ -41,4 +44,5 @@ socket.on('welcome message', function(msg) {
 
 function addChatMessage(message, nickname) {
   messages.innerHTML += "<li>" + nickname + ": " + message + "</li>";
+  window.scrollTo(0, document.body.scrollHeight);
 }
