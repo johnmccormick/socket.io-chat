@@ -11,7 +11,7 @@ var userNicknames = [];
 var userTimeouts = [];
 
 const WELCOME_MSG = "Welcome to John's chat room!"
-const TYPING_TIMEOUT = 2000;
+const TYPING_TIMEOUT = 1000;
 
 io.on('connection', function(socket) {
 	socket.emit('welcome message', WELCOME_MSG);
@@ -41,38 +41,96 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-const TIMEOUT_UPDATE_INTERVAL = 1000;
+const TIMEOUT_UPDATE_INTERVAL = 500;
 
 setInterval(function() {
-	var typingOutput = '';
-	var numTyping = 0;
-	var numUsers = userTimeouts.length;
+
+	var numUsersTyping = 0;
+	var usersTyping = [];
+	var usersNotTyping = [];
 	
+	var nonTypersOutput = '';
+
+	var numUsers = userTimeouts.length;
 	for (var i = 0; i < numUsers; i++) {
 		if (userTimeouts[i] > 0) {
 			userTimeouts[i] -= TIMEOUT_UPDATE_INTERVAL;
-			var socket = sockets[i];
-			var nickname = userNicknames[i];
-			if (numTyping > 0) {
-				typingOutput += ', ' + nickname ;
-			} else {
-				typingOutput += nickname ;
-			}
-			
-			numTyping += 1;
+			numUsersTyping += 1;
+			usersTyping.push(i);
+		} else {
+			usersNotTyping.push(i);
 		}
 	}
 
-	if (numTyping == 1) {
+	// output strings for typers
+	for (var socketIndex = 0; socketIndex < numUsersTyping; socketIndex++) {
+		var typingOutput = '';
+		var ownMessageOffset = 0;
+
+		var typingUsersInString = 0;
+		for (var userIndex = 0; userIndex < numUsersTyping; userIndex++) {
+			if (userIndex != socketIndex) {
+				var id = usersTyping[userIndex];
+				var nickname = userNicknames[id];
+
+				if (userIndex - ownMessageOffset > 0) {
+					if (typingUsersInString + 2 == numUsersTyping) {
+						typingOutput += ' and ' + nickname;
+					} else {
+						typingOutput += ', ' + nickname;
+					}
+				} else {
+					typingOutput += nickname ;
+				}
+				typingUsersInString += 1;
+			} else {
+				ownMessageOffset = 1;
+			}
+
+		}
+
+		if (numUsersTyping == 2) {
+			typingOutput += ' is typing.';
+		} else if (numUsersTyping > 2) {
+			typingOutput += ' are typing.';
+		} 
+
+		//socket emit message
+		var socketID = usersTyping[socketIndex];
+		var socket = sockets[socketID];
+	
+		socket.emit('typing output', typingOutput);
+	}
+
+	var typingOutput = '';
+	// output string for non typers
+	for (var userIndex = 0; userIndex < numUsersTyping; userIndex++) {
+		var id = usersTyping[userIndex];
+		var nickname = userNicknames[id];
+
+		if (userIndex > 0) {
+			if (userIndex + 1 == numUsersTyping) {
+				typingOutput += ' and ' + nickname;
+			} else {
+				typingOutput += ', ' + nickname;
+			}
+		} else {
+			typingOutput += nickname ;
+		}
+	}
+
+	if (numUsersTyping == 1) {
 		typingOutput += ' is typing.';
-	} else if (numTyping > 1) {
+	} else if (numUsersTyping > 1) {
 		typingOutput += ' are typing.';
 	} 
 
-	if (numTyping > 0) {
-		console.log(typingOutput);
+	var numUsersNotTyping = usersNotTyping.length;
+	for (var i = 0; i < numUsersNotTyping; i++) {
+		var socketID = usersNotTyping[i];
+		var socket = sockets[socketID];
+	
+		socket.emit('typing output', typingOutput);
 	}
-
-	io.emit("typing output", typingOutput)
 
 }, TIMEOUT_UPDATE_INTERVAL);

@@ -35,7 +35,6 @@ socket.on('clear typing', function() {
   typing.innerHTML = "";
 });   
 
-
 socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
 });

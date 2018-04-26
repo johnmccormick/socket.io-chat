@@ -5,7 +5,8 @@ form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; border-rad
 form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; border-radius: 5px; }
 #nickname { margin-bottom: 3px; }
 #n { width: 25%; }
-#messages, #typing { list-style-type: none; margin: 0; padding: 0; }
+#typing { margin-bottom: 100px; }
+#messages, #typing { list-style-type: none; padding: 0; }
 #messages li, #typing { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
 #typing { font-style: italic; }
