@@ -27,15 +27,52 @@ socket.on('chat message', function(msg) {
   addChatMessage(msg['message'], msg['nickname']);
 });
 
-socket.on('typing output', function(msg) {
-  typing.style.display = 'block';
-  typing.innerHTML = msg;
-  window.scrollTo(0, document.body.scrollHeight);
-});   
+socket.on('typing data', function(data) {
 
-socket.on('clear typing', function() {
-  typing.innerHTML = "";
-  typing.style.display = 'none';
+  var numUsersTyping = data['numUsersTyping'];
+  if (numUsersTyping > 0) {
+    var thisNickname = nickname.value;
+    var typerNicknames = data['nicknames'];
+
+    var typingOutput = '';
+
+    var thisTyperOffset = 0;
+    if (typerNicknames.indexOf(thisNickname) > -1) { thisTyperOffset = 1; }
+    
+    var typingUsers = 0;
+    for (var i = 0; i < numUsersTyping; i++) {
+      if (typerNicknames[i] != thisNickname) {
+        var stringConnector = '';
+        if (typingUsers > 0) {
+          if (typingUsers + thisTyperOffset + 1 == numUsersTyping) {
+            stringConnector = ' and ';
+          } else {
+            stringConnector = ', ';
+          }
+        }
+
+        typingOutput += stringConnector + typerNicknames[i];
+        typingUsers += 1;
+      } 
+    }
+
+    if (typingUsers > 0) {
+      if (typingUsers > 1) {
+        typingOutput += ' are typing...';
+      } else if (typingUsers == 1) {
+        typingOutput += ' is typing...';
+      } 
+
+      typing.style.display = 'block';
+      typing.innerHTML = typingOutput;
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    
+
+  } else {
+    typing.innerHTML = "";
+    typing.style.display = 'none';
+  }
 });   
 
 socket.on('welcome message', function(msg) {
