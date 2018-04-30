@@ -7,10 +7,13 @@ body { font: 13px Helvetica, Arial; }
 #n { width: 30%; }
 #m { width: 90%; }
 #messages-bottom { height: 77px; }
-#messages, #typing { list-style-type: none; padding: 0; }
-#messages li, #typing { padding: 5px 10px; }
+#messages, #typing-info { list-style-type: none; padding: 0; }
+#messages li, #typing-info { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
-#typing { font-style: italic; }
+#typing-info { font-style: italic; }
+
+/*
 #notification { background: green !important; color: white; }
 #error { background: red !important; color: white; }
 #welcome { background: pink !important; }/
+*/

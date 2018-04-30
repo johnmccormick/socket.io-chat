@@ -11,7 +11,7 @@ var userNicknames = [];
 var userTimeouts = [];
 var guestsIterator = 0;
 
-const WELCOME_MSG = "Welcome to John's chat room!"
+const WELCOME_MSG = "Welcome to the chat room!"
 const TYPING_TIMEOUT = 500;
 
 io.on('connection', function(socket) {
@@ -20,51 +20,47 @@ io.on('connection', function(socket) {
 
 	sockets.push(socket);
 	socketIDs.push(socket.id);
-	userNicknames.push('');
+	var nickname = generateNickname();
+	userNicknames.push(nickname);
 	userTimeouts.push(0);
 
-	socket.on('chat message', function(msg){
-		if (msg['message']) {
-			socket.broadcast.emit('chat message', msg);
-			
-			var id = socketIDs.indexOf(socket.id);
-			userTimeouts[id] = 0;
+	socket.emit('nickname assign', nickname);
+	socket.broadcast.emit('notification message', nickname + ' joined the room.');
+
+	socket.on('chat message', function(message){
+		if (message) {
+			var index = socketIDs.indexOf(socket.id);
+			var nickname = userNicknames[index];
+			var data = { message: message, nickname: nickname };
+			socket.broadcast.emit('chat message', data);
+			userTimeouts[index] = 0;
 		}
   });
 
 	socket.on('typing', function(){
-		var id = socketIDs.indexOf(socket.id);
-		userTimeouts[id] = TYPING_TIMEOUT;
+		var index = socketIDs.indexOf(socket.id);
+		userTimeouts[index] = TYPING_TIMEOUT;
 	});
 
   socket.on('disconnect', function(){
-  	var id = socketIDs.indexOf(socket.id);
-    sockets.splice(id, 1);
-    socketIDs.splice(id, 1);
-    userNicknames.splice(id, 1);
-    userTimeouts.splice(id, 1);
-  });
-
-  socket.on('loaded', function() {
-  	var id = socketIDs.indexOf(socket.id);
-  	var nickname = generateNickname();
-		userNicknames[id] = nickname;
-
-		socket.emit('nickname assign', nickname);
-		socket.broadcast.emit('notification message', nickname + ' joined the chat room.');
+  	var index = socketIDs.indexOf(socket.id);
+    sockets.splice(index, 1);
+    socketIDs.splice(index, 1);
+    userNicknames.splice(index, 1);
+    userTimeouts.splice(index, 1);
   });
 
   socket.on('request nickname', function(newNickname) {
   	var verified = verifyNickname(newNickname);
   	if (verified == true) {
 	  	if (userNicknames.indexOf(newNickname) == -1) {
-	  		var id = socketIDs.indexOf(socket.id);
-	  		var oldNickname = userNicknames[id];
-	  		userNicknames[id] = newNickname;
+	  		var index = socketIDs.indexOf(socket.id);
+	  		var oldNickname = userNicknames[index];
+	  		userNicknames[index] = newNickname;
 	  		socket.emit('nickname assign', newNickname);
-	  		socket.broadcast.emit('notification message', oldNickname + ' changed their nickname to ' + newNickname + '.');
+	  		io.emit('notification message', oldNickname + ' changed their nickname to ' + newNickname + '.');
 	  	} else {
-	  		sendErrorMessage(socket, 'Nickname already exists.');
+	  		sendErrorMessage(socket, 'Nickname [' + newNickname + '] already exists.');
 	  	}
 	  } else {
 	  	sendErrorMessage(socket, 'Invalid nickname.');

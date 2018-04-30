@@ -1,18 +1,14 @@
 var socket = io();
 
 var message = document.getElementById('m'),
-    nickname = document.getElementById('n'),
-    form = document.getElementById('form'),
     send = document.getElementById('send'),
+    nickname = document.getElementById('n'),
+    saveButton = document.getElementById('save'),
+    form = document.getElementById('form'),
     messages = document.getElementById('messages'),
-    typing = document.getElementById('typing'),
-    saveButton = document.getElementById('save');
+    typingInfo = document.getElementById('typing-info');
 
 var storedNickname = nickname.value;
-
-send.addEventListener('click', function() {
-  sendMessage();
-});
 
 message.addEventListener('keydown', function(e) {
   if (e.keyCode == 13) {
@@ -20,19 +16,12 @@ message.addEventListener('keydown', function(e) {
   }
 });
 
-function sendMessage() {
-  if (message.value) {
-    socket.emit('chat message', { 
-      message: message.value,
-      nickname: nickname.value,
-    });
-    addChatMessage(message.value, "You");
-    message.value = "";
-  }
-}
+send.addEventListener('click', function() {
+  sendMessage();
+});
 
-save.addEventListener('click', function() {
-  requestNicknameUpdate();
+message.addEventListener('input', function(){
+  socket.emit('typing', nickname.value);
 });
 
 nickname.addEventListener('keydown', function(e) {
@@ -41,18 +30,18 @@ nickname.addEventListener('keydown', function(e) {
   }
 });
 
-function requestNicknameUpdate() {
-  var newNickname = nickname.value;
-  socket.emit('request nickname', newNickname);
-}
-
-message.addEventListener('input', function(){
-  socket.emit('typing', nickname.value);
+save.addEventListener('click', function() {
+  requestNicknameUpdate();
 });
 
-socket.on('chat message', function(msg) {
-  addChatMessage(msg['message'], msg['nickname']);
+nickname.addEventListener("input", function () {
+  if (nickname.value && nickname.value != storedNickname) {
+    showSaveButton();
+  } else {
+    hideSaveButton();
+  }
 });
+
 
 socket.on('typing data', function(data) {
   var numUsersTyping = data['numUsersTyping'];
@@ -89,17 +78,22 @@ socket.on('typing data', function(data) {
         typingOutput += ' is typing...';
       } 
 
-      typing.style.display = 'block';
-      typing.innerHTML = typingOutput;
-      window.scrollTo(0, document.body.scrollHeight);
+      typingInfo.style.display = 'block';
+      typingInfo.innerHTML = typingOutput;
+      scrollToBottom();
     }
     
 
   } else {
-    typing.innerHTML = "";
-    typing.style.display = 'none';
+    typingInfo.innerHTML = "";
+    typingInfo.style.display = 'none';
   }
 });   
+
+socket.on('nickname assign', function(newNickname) {
+  nickname.value = newNickname;
+  hideSaveButton();
+});
 
 socket.on('clear messages', function(msg) {
   messages.innerHTML = '';
@@ -109,31 +103,49 @@ socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
 });
 
-socket.on('nickname assign', function(newNickname) {
-  nickname.value = newNickname;
-  hideSaveButton();
+socket.on('chat message', function(msg) {
+  addChatMessage(msg['message'], msg['nickname']);
 });
 
 socket.on('error message', function(msg) {
-  messages.innerHTML += '<li id="error">' + msg + '</li>';
+  addErrorMessage(msg);
 });
 
 socket.on('notification message', function(msg) {
-  messages.innerHTML += '<li id="notification">' + msg + '</li>';
+  addNotificationMessage(msg);
 });
+
+function sendMessage() {
+  if (message.value) {
+    socket.emit('chat message', message.value);
+    addChatMessage(message.value, "You");
+    message.value = "";
+  }
+}
+
+function requestNicknameUpdate() {
+  var newNickname = nickname.value;
+  socket.emit('request nickname', newNickname);
+}
 
 function addChatMessage(message, nickname) {
   messages.innerHTML += '<li id"message">' + nickname + ': ' + message + '</li>';
-  window.scrollTo(0, document.body.scrollHeight);
+  scrollToBottom();
 }
 
-nickname.addEventListener("input", function () {
-  if (nickname.value && nickname.value != storedNickname) {
-    showSaveButton();
-  } else {
-    hideSaveButton();
-  }
-});
+function addNotificationMessage(message) {
+  messages.innerHTML += '<li id="notification">' + message + '</li>';
+  scrollToBottom();
+}
+
+function addErrorMessage(message) {
+  messages.innerHTML += '<li id"error">' + message + '</li>';
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  window.scrollTo(0, document.body.scrollHeight);
+}
 
 function showSaveButton () {
   saveButton.style.display = 'inline-block';
@@ -142,9 +154,3 @@ function showSaveButton () {
 function hideSaveButton () {
   saveButton.style.display = 'none';
 }
-
-// Loadup //
-////////////
-window.onload = function () {
-  socket.emit('loaded');
-};
