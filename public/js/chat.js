@@ -5,6 +5,7 @@ var message = document.getElementById('m'),
     nickname = document.getElementById('n'),
     saveButton = document.getElementById('save'),
     form = document.getElementById('form'),
+    usersOnline = document.getElementById('users-online'),
     messages = document.getElementById('messages'),
     typingInfo = document.getElementById('typing-info');
 
@@ -41,7 +42,6 @@ nickname.addEventListener("input", function () {
     hideSaveButton();
   }
 });
-
 
 socket.on('typing data', function(data) {
   var numUsersTyping = data['numUsersTyping'];
@@ -101,6 +101,22 @@ socket.on('clear messages', function(msg) {
 
 socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
+});
+
+socket.on('users online', function(numUsersOnline) {
+  var usersInfoString = ' users online';
+  if (numUsersOnline == 1) {
+    usersInfoString = ' user online';
+  } 
+  if (numUsersOnline > 0) {
+    usersOnline.style.display = 'block';
+    usersOnline.innerHTML = '<a href="#">' + numUsersOnline + usersInfoString + '.</a>';
+    var usersOnlineHeight = usersOnline.clientHeight;
+    messages.style.paddingTop = usersOnlineHeight + "px";
+  } else {
+    usersOnline.style.display = 'none';
+    usersOnline.innerHTML = '';
+  }
 });
 
 socket.on('chat message', function(msg) {
