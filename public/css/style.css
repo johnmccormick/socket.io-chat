@@ -11,4 +11,6 @@ body { font: 13px Helvetica, Arial; }
 #messages li, #typing { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
 #typing { font-style: italic; }
-#welcome { background: pink !important; }/      
+#notification { background: green !important; color: white; }
+#error { background: red !important; color: white; }
+#welcome { background: pink !important; }/

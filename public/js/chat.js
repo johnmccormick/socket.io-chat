@@ -46,7 +46,7 @@ function requestNicknameUpdate() {
   socket.emit('request nickname', newNickname);
 }
 
-message.addEventListener('keypress', function(){
+message.addEventListener('input', function(){
   socket.emit('typing', nickname.value);
 });
 
@@ -114,8 +114,16 @@ socket.on('nickname assign', function(newNickname) {
   hideSaveButton();
 });
 
+socket.on('error message', function(msg) {
+  messages.innerHTML += '<li id="error">' + msg + '</li>';
+});
+
+socket.on('notification message', function(msg) {
+  messages.innerHTML += '<li id="notification">' + msg + '</li>';
+});
+
 function addChatMessage(message, nickname) {
-  messages.innerHTML += "<li>" + nickname + ": " + message + "</li>";
+  messages.innerHTML += '<li id"message">' + nickname + ': ' + message + '</li>';
   window.scrollTo(0, document.body.scrollHeight);
 }
 

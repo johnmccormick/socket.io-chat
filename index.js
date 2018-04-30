@@ -51,17 +51,30 @@ io.on('connection', function(socket) {
 		userNicknames[id] = nickname;
 
 		socket.emit('nickname assign', nickname);
+		socket.broadcast.emit('notification message', nickname + ' joined the chat room.');
   });
 
   socket.on('request nickname', function(newNickname) {
   	var verified = verifyNickname(newNickname);
-  	if (verified == true && userNicknames.indexOf(newNickname) == -1) {
-  		var id = socketIDs.indexOf(socket.id);
-  		userNicknames[id] = newNickname;
-  		socket.emit('nickname assign', newNickname);
-  	}
+  	if (verified == true) {
+	  	if (userNicknames.indexOf(newNickname) == -1) {
+	  		var id = socketIDs.indexOf(socket.id);
+	  		var oldNickname = userNicknames[id];
+	  		userNicknames[id] = newNickname;
+	  		socket.emit('nickname assign', newNickname);
+	  		socket.broadcast.emit('notification message', oldNickname + ' changed their nickname to ' + newNickname + '.');
+	  	} else {
+	  		sendErrorMessage(socket, 'Nickname already exists.');
+	  	}
+	  } else {
+	  	sendErrorMessage(socket, 'Invalid nickname.');
+	  }
   });
 });
+
+function sendErrorMessage(socket, message) {
+	socket.emit('error message', message);
+}
 
 function verifyNickname (nickname) {
 	var nicknameLength = nickname.length;
