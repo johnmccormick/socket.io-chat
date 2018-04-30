@@ -9,12 +9,15 @@ var sockets = [];
 var socketIDs = [];
 var userNicknames = [];
 var userTimeouts = [];
+var guestsIterator = 0;
 
 const WELCOME_MSG = "Welcome to John's chat room!"
-const TYPING_TIMEOUT = 12200;
+const TYPING_TIMEOUT = 500;
 
 io.on('connection', function(socket) {
+	socket.emit('clear messages');
 	socket.emit('welcome message', WELCOME_MSG);
+	assignNickname(socket);
 
 	sockets.push(socket);
 	socketIDs.push(socket.id);
@@ -45,10 +48,13 @@ io.on('connection', function(socket) {
   });
 });
 
-
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
+function assignNickname(socket) {
+	var nickname = 'Guest' + guestsIterator;
+}
 
 const TIMEOUT_UPDATE_INTERVAL = 50;
 

@@ -75,6 +75,10 @@ socket.on('typing data', function(data) {
   }
 });   
 
+socket.on('clear messages', function(msg) {
+  messages.innerHTML = '';
+});
+
 socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
 });
