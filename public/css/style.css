@@ -4,7 +4,7 @@ body { font: 13px Helvetica, Arial; }
 #form input { border: 0; padding: 10px; margin-right: .5%; border-radius: 5px; }
 #form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; border-radius: 5px; }
 #nickname { margin-bottom: 3px; }
-#n { width: 25%; }
+#n { width: 30%; }
 #m { width: 90%; }
 #messages-bottom { height: 77px; }
 #messages, #typing { list-style-type: none; padding: 0; }

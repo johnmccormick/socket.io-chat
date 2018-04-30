@@ -54,13 +54,32 @@ io.on('connection', function(socket) {
   });
 
   socket.on('request nickname', function(newNickname) {
-  	if (userNicknames.indexOf(newNickname) == -1) {
+  	var verified = verifyNickname(newNickname);
+  	if (verified == true && userNicknames.indexOf(newNickname) == -1) {
   		var id = socketIDs.indexOf(socket.id);
   		userNicknames[id] = newNickname;
   		socket.emit('nickname assign', newNickname);
   	}
   });
 });
+
+function verifyNickname (nickname) {
+	var nicknameLength = nickname.length;
+
+	if (nicknameLength > 15) {
+		return false;
+	}
+
+	if (nickname[0] == ' ') {
+		return false;
+	}
+
+	if (nickname[nicknameLength - 1] == ' ') {
+		return false;
+	}
+
+	return true;
+}
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
