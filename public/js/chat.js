@@ -5,9 +5,22 @@ var message = document.getElementById('m'),
     form = document.getElementById('form'),
     send = document.getElementById('send'),
     messages = document.getElementById('messages'),
-    typing = document.getElementById('typing');
+    typing = document.getElementById('typing'),
+    saveButton = document.getElementById('save');
 
-form.onsubmit = function() {
+var storedNickname = nickname.value;
+
+send.addEventListener('click', function() {
+  sendMessage();
+});
+
+message.addEventListener('keydown', function(e) {
+  if (e.keyCode == 13) {
+    sendMessage();
+  }
+});
+
+function sendMessage() {
   if (message.value) {
     socket.emit('chat message', { 
       message: message.value,
@@ -16,8 +29,22 @@ form.onsubmit = function() {
     addChatMessage(message.value, "You");
     message.value = "";
   }
-  return false;
-};
+}
+
+save.addEventListener('click', function() {
+  requestNicknameUpdate();
+});
+
+nickname.addEventListener('keydown', function(e) {
+  if (e.keyCode == 13) {
+    requestNicknameUpdate();
+  }
+});
+
+function requestNicknameUpdate() {
+  var newNickname = nickname.value;
+  socket.emit('request nickname', newNickname);
+}
 
 message.addEventListener('keypress', function(){
   socket.emit('typing', nickname.value);
@@ -28,7 +55,6 @@ socket.on('chat message', function(msg) {
 });
 
 socket.on('typing data', function(data) {
-
   var numUsersTyping = data['numUsersTyping'];
   if (numUsersTyping > 0) {
     var thisNickname = nickname.value;
@@ -83,7 +109,34 @@ socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
 });
 
+socket.on('nickname assign', function(newNickname) {
+  nickname.value = newNickname;
+  hideSaveButton();
+});
+
 function addChatMessage(message, nickname) {
   messages.innerHTML += "<li>" + nickname + ": " + message + "</li>";
   window.scrollTo(0, document.body.scrollHeight);
 }
+
+nickname.addEventListener("input", function () {
+  if (nickname.value && nickname.value != storedNickname) {
+    showSaveButton();
+  } else {
+    hideSaveButton();
+  }
+});
+
+function showSaveButton () {
+  saveButton.style.display = 'inline-block';
+}
+
+function hideSaveButton () {
+  saveButton.style.display = 'none';
+}
+
+// Loadup //
+////////////
+window.onload = function () {
+  socket.emit('loaded');
+};

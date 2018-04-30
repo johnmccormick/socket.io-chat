@@ -17,7 +17,6 @@ const TYPING_TIMEOUT = 500;
 io.on('connection', function(socket) {
 	socket.emit('clear messages');
 	socket.emit('welcome message', WELCOME_MSG);
-	assignNickname(socket);
 
 	sockets.push(socket);
 	socketIDs.push(socket.id);
@@ -33,10 +32,9 @@ io.on('connection', function(socket) {
 		}
   });
 
-	socket.on('typing', function(nickname){
+	socket.on('typing', function(){
 		var id = socketIDs.indexOf(socket.id);
 		userTimeouts[id] = TYPING_TIMEOUT;
-		userNicknames[id] = nickname;
 	});
 
   socket.on('disconnect', function(){
@@ -46,14 +44,36 @@ io.on('connection', function(socket) {
     userNicknames.splice(id, 1);
     userTimeouts.splice(id, 1);
   });
+
+  socket.on('loaded', function() {
+  	var id = socketIDs.indexOf(socket.id);
+  	var nickname = generateNickname();
+		userNicknames[id] = nickname;
+
+		socket.emit('nickname assign', nickname);
+  });
+
+  socket.on('request nickname', function(newNickname) {
+  	if (userNicknames.indexOf(newNickname) == -1) {
+  		var id = socketIDs.indexOf(socket.id);
+  		userNicknames[id] = newNickname;
+  		socket.emit('nickname assign', newNickname);
+  	}
+  });
 });
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-function assignNickname(socket) {
+function generateNickname() {
 	var nickname = 'Guest' + guestsIterator;
+	while (userNicknames.indexOf(nickname) != -1) {
+		guestsIterator++;
+		nickname = 'Guest' + guestsIterator;
+	}
+
+	return nickname;
 }
 
 const TIMEOUT_UPDATE_INTERVAL = 50;
