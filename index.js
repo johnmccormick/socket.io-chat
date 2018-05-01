@@ -25,7 +25,10 @@ io.on('connection', function(socket) {
 	userTimeouts.push(0);
 
 	var numUsersOnline = sockets.length;
-	io.emit('users online', numUsersOnline);
+	io.emit('users online', {
+		numUsersOnline: numUsersOnline,
+		userNicknames: userNicknames
+	});
 
 	socket.emit('nickname assign', nickname);
 	socket.broadcast.emit('notification message', nickname + ' joined the room.');
@@ -53,7 +56,10 @@ io.on('connection', function(socket) {
     userTimeouts.splice(index, 1);
 
     var numUsersOnline = sockets.length ;
-		io.emit('users online', numUsersOnline);
+		io.emit('users online', {
+			numUsersOnline: numUsersOnline,
+			userNicknames: userNicknames
+		});
   });
 
   socket.on('request nickname', function(newNickname) {

@@ -1,5 +1,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font: 13px Helvetica, Arial; }
+a { text-decoration: none; font-weight: bold; }
 #form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
 #form input { border: 0; padding: 10px; margin-right: .5%; border-radius: 5px; }
 #form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; border-radius: 5px; }
@@ -8,11 +9,17 @@ body { font: 13px Helvetica, Arial; }
 #m { width: 90%; }
 #messages-bottom { height: 77px; }
 #messages { list-style-type: none; padding: 0; }
-#users-online { position: fixed; width: 100%; margin: auto; display: none; }
-#users-online, #users-online a { background-color: green; color: white; text-decoration: none; font-weight: bold; }
-#users-online, #messages li, #typing-info { padding: 5px 10px; }
+#num-users-online-info { position: fixed; width: 100%; margin: auto; display: none; }
+#num-users-online-info { background-color: green; }
+#num-users-online-info, #messages li, #typing-info { padding: 5px 10px; }
+#user-list { position: fixed; background-color: green; top: 24px; left: 10px; list-style: none; padding: 5px 7px; display: none; max-height: 70%; overflow-y: scroll; }
+#user-list li { padding: 2px; }
+#num-users-online-info a, #user-list a { color: white; }
+
+
 #messages li:nth-child(odd) { background: #eee; }
 #typing-info { font-style: italic; }
+
 
 /*
 #notification { background: green !important; color: white; }

@@ -5,7 +5,8 @@ var message = document.getElementById('m'),
     nickname = document.getElementById('n'),
     saveButton = document.getElementById('save'),
     form = document.getElementById('form'),
-    usersOnline = document.getElementById('users-online'),
+    numUsersOnlineInfo = document.getElementById('num-users-online-info'),
+    userList = document.getElementById('user-list'),
     messages = document.getElementById('messages'),
     typingInfo = document.getElementById('typing-info');
 
@@ -42,6 +43,22 @@ nickname.addEventListener("input", function () {
     hideSaveButton();
   }
 });
+
+numUsersOnlineInfo.addEventListener("mouseover", function () {
+  userList.style.display = 'block';
+})
+
+numUsersOnlineInfo.addEventListener("mouseout", function () {
+  userList.style.display = 'none';
+})
+
+userList.addEventListener("mouseover", function () {
+  userList.style.display = 'block';
+})
+
+userList.addEventListener("mouseout", function () {
+  userList.style.display = 'none';
+})
 
 socket.on('typing data', function(data) {
   var numUsersTyping = data['numUsersTyping'];
@@ -103,20 +120,22 @@ socket.on('welcome message', function(msg) {
   messages.innerHTML += '<li id="welcome">' + msg + '</li>';
 });
 
-socket.on('users online', function(numUsersOnline) {
+socket.on('users online', function(data) {
+  var numUsersOnline = data['numUsersOnline'];
   var usersInfoString = ' users online';
   if (numUsersOnline == 1) {
     usersInfoString = ' user online';
   } 
   if (numUsersOnline > 0) {
-    usersOnline.style.display = 'block';
-    usersOnline.innerHTML = '<a href="#">' + numUsersOnline + usersInfoString + '.</a>';
-    var usersOnlineHeight = usersOnline.clientHeight;
-    messages.style.paddingTop = usersOnlineHeight + "px";
+    numUsersOnlineInfo.style.display = 'block';
+    numUsersOnlineInfo.innerHTML = '<a href="#">' + numUsersOnline + usersInfoString + '.</a>';
+    var numUsersOnlineInfoHeight = numUsersOnlineInfo.clientHeight;
+    messages.style.paddingTop = numUsersOnlineInfoHeight + "px";
   } else {
-    usersOnline.style.display = 'none';
-    usersOnline.innerHTML = '';
+    numUsersOnlineInfo.style.display = 'none';
+    numUsersOnlineInfo.innerHTML = '';
   }
+  populateOnlineUsersInfo(data);
 });
 
 socket.on('chat message', function(msg) {
@@ -136,6 +155,20 @@ function sendMessage() {
     socket.emit('chat message', message.value);
     addChatMessage(message.value, "You");
     message.value = "";
+  }
+}
+
+function populateOnlineUsersInfo(data) {
+  userList.innerHTML = '';
+  var numUsersOnline = data['numUsersOnline'];
+  var usersOnline = data['userNicknames'];
+  for (var i = 0; i < numUsersOnline; i++) {
+    userList.innerHTML += '<li><a href="#">' + usersOnline[i] + '</a></li>';
+  }
+  if (numUsersOnline < 22) {
+    userList.style.overflowY = 'hidden';
+  } else {
+    userList.style.overflowY = 'scroll';
   }
 }
 
