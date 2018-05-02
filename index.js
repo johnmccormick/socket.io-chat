@@ -55,7 +55,7 @@ io.on('connection', function(socket) {
     userNicknames.splice(index, 1);
     userTimeouts.splice(index, 1);
 
-    var numUsersOnline = sockets.length ;
+    var numUsersOnline = sockets.length;
 		io.emit('users online', {
 			numUsersOnline: numUsersOnline,
 			userNicknames: userNicknames
@@ -71,6 +71,11 @@ io.on('connection', function(socket) {
 	  		userNicknames[index] = newNickname;
 	  		socket.emit('nickname assign', newNickname);
 	  		io.emit('notification message', oldNickname + ' changed their nickname to ' + newNickname + '.');
+	  		var numUsersOnline = sockets.length;
+  			io.emit('users online', {
+					numUsersOnline: numUsersOnline,
+					userNicknames: userNicknames
+				});
 	  	} else {
 	  		sendErrorMessage(socket, 'Nickname [' + newNickname + '] already exists.');
 	  	}
