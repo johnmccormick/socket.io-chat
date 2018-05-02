@@ -1,5 +1,5 @@
 {
-  "name": "socket-chat-example",
+  "name": "socket-io-chat",
   "version": "0.0.1",
   "description": "my first socket.io app",
   "engines": {
@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "test": "node test.js"
   },
   "dependencies": {
     "express": "^4.16.3",
@@ -15,5 +16,15 @@
   },
   "devDependencies": {
     "nodemon": "^1.17.3"
-  }
+  },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/johnmccormick/socket.io-chat"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express",
+    "socket-io"
+  ],
 }
