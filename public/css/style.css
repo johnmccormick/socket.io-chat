@@ -15,11 +15,8 @@ a { text-decoration: none; font-weight: bold; }
 #user-list { position: fixed; background-color: green; top: 24px; left: 2px; list-style: none; padding: 5px 7px; display: none; max-height: 70%; overflow-y: scroll; }
 #user-list li { padding: 2px; }
 #num-users-online-info a, #user-list a { color: white; }
-
-
 #messages li:nth-child(odd) { background: #eee; }
 #typing-info { font-style: italic; }
-
 
 /*
 #notification { background: green !important; color: white; }
