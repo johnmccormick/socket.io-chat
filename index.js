@@ -1,3 +1,4 @@
+const PORT = process.env.PORT || 3000
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -107,8 +108,8 @@ function verifyNickname (nickname) {
 	return true;
 }
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(PORT, function(){
+	console.log(`Listening on ${ PORT }`);
 });
 
 function generateNickname() {
