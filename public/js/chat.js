@@ -7,6 +7,9 @@ var message = document.getElementById('m'),
     form = document.getElementById('form'),
     numUsersOnlineInfo = document.getElementById('num-users-online-info'),
     userList = document.getElementById('user-list'),
+    userListWrapper = document.getElementById('user-list-wrapper'),
+    backToChatButton = document.getElementById('back-to-chat'),
+    mainChat = document.getElementById('main-chat'),
     messages = document.getElementById('messages'),
     typingInfo = document.getElementById('typing-info');
 
@@ -44,20 +47,14 @@ nickname.addEventListener("input", function () {
   }
 });
 
-numUsersOnlineInfo.addEventListener("mouseover", function () {
-  userList.style.display = 'block';
+numUsersOnlineInfo.addEventListener("click", function () {
+  userListWrapper.style.display = 'block';
+  mainChat.style.display = 'none';
 })
 
-numUsersOnlineInfo.addEventListener("mouseout", function () {
-  userList.style.display = 'none';
-})
-
-userList.addEventListener("mouseover", function () {
-  userList.style.display = 'block';
-})
-
-userList.addEventListener("mouseout", function () {
-  userList.style.display = 'none';
+backToChatButton.addEventListener("click", function () {
+  userListWrapper.style.display = 'none';
+  mainChat.style.display = 'block';
 })
 
 socket.on('typing data', function(data) {

@@ -1,4 +1,4 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; box-sizing: border-box; }
 body { font: 13px Helvetica, Arial; }
 a { text-decoration: none; font-weight: bold; }
 #form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
@@ -12,9 +12,14 @@ a { text-decoration: none; font-weight: bold; }
 #num-users-online-info { position: fixed; width: 100%; margin: auto; display: none; }
 #num-users-online-info { background-color: green; }
 #num-users-online-info, #messages li, #typing-info { padding: 5px 10px; }
-#user-list { position: fixed; background-color: green; top: 24px; left: 2px; list-style: none; padding: 5px 7px; display: none; max-height: 70%; overflow-y: scroll; }
-#user-list li { padding: 2px; }
-#num-users-online-info a, #user-list a { color: white; }
+#user-list-wrapper { position: absolute; top: 0px; left: 0px; min-height: 100%; min-width: 100%; background-color: #f4f4f4; padding: 5px 7px; display: none; }
+#user-list { list-style: square; color: green; margin: 10px 0px; }
+#user-list li { padding: 2px;  }
+#user-list-title { text-align: center; }
+#back-to-chat { float: left; }
+#num-users-online-info a { color: white; }
+#users-online-title { font-weight: bold; color: black; font-size: 16px; text-align: center; margin: auto; }
+#user-list a { color: green; }
 #messages li:nth-child(odd) { background: #eee; }
 #typing-info { font-style: italic; }
 
