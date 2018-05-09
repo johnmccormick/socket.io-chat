@@ -72,10 +72,10 @@ io.on('connection', function(socket) {
 				var onlineUserData = getOnlineUsersData();
 				io.emit('users online', onlineUserData);
 	  	} else {
-	  		sendErrorMessage(socket, 'Nickname [' + newNickname + '] already exists.');
+	  		// sendErrorMessage(socket, 'Nickname [' + newNickname + '] already exists.');
 	  	}
 	  } else {
-	  	sendErrorMessage(socket, 'Invalid nickname.');
+	  	// sendErrorMessage(socket, 'Invalid nickname.');
 	  }
 	});
 });

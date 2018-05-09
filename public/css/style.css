@@ -12,6 +12,7 @@ a { text-decoration: none; font-weight: bold; }
 #num-users-online-info, #messages li, #typing-info { padding: 5px 10px; }
 #typing-info { font-style: italic; }
 #messages-bottom { height: 77px; }
+#send { min-width: 40px; }
 #send-message { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
 #send-message input { border: 0; padding: 10px; margin-right: .5%; border-radius: 5px; }
 #send-message button { width: 9%; border: none; padding: 10px; border-radius: 5px; }
