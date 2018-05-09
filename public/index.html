@@ -4,24 +4,26 @@
     <title>Socket.IO chat</title>
     <link href="/css/style.css" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
+    <div id="nickname-wrapper">
+      <div id="nickname-background">
+        <p id="set-nickname-title">Set nickname</p>
+        <input id="nickname" autocomplete="off" value="" maxlength="15"/><button id="save">Enter</button>
+      </div>
+    </div>
     <div id="main-chat">
       <p id="num-users-online-info"></p>
       <ul id="messages"></ul>
       <p id="typing-info"></p>
       <div id="messages-bottom"></div>
-      <div id="form">
-        <div id="nickname">
-          <input id="n" autocomplete="off" value="" maxlength="15"/><button id="save">Save</button>
-        </div>
-        <input id="m" autocomplete="off" /><button id="send">Send</button>
+      <div id="send-message">
+        <input id="message" autocomplete="off" /><button id="send">Send</button>
       </div>
     </div>
     <div id="user-list-wrapper">
-      <div id="user-list-title">
-        <a id="back-to-chat" href="#">Back</a><span id="users-online-title">In chat</span>
+      <div id="user-list-header">
+        <a id="back-to-chat" href="#">Back</a><p id="user-list-title">In chat</p>
       </div>
       <hr>
       <ul id="user-list"></ul>

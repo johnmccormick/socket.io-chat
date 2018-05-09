@@ -1,10 +1,10 @@
 var socket = io();
 
-var message = document.getElementById('m'),
+var message = document.getElementById('message'),
     send = document.getElementById('send'),
-    nickname = document.getElementById('n'),
+    nicknameWrapper = document.getElementById('nickname-wrapper'),
+    nickname = document.getElementById('nickname'),
     saveButton = document.getElementById('save'),
-    form = document.getElementById('form'),
     numUsersOnlineInfo = document.getElementById('num-users-online-info'),
     userList = document.getElementById('user-list'),
     userListWrapper = document.getElementById('user-list-wrapper'),
@@ -13,7 +13,7 @@ var message = document.getElementById('m'),
     messages = document.getElementById('messages'),
     typingInfo = document.getElementById('typing-info');
 
-var storedNickname = nickname.value;
+var storedNickname = null;
 
 message.addEventListener('keydown', function(e) {
   if (e.keyCode == 13) {
@@ -35,16 +35,8 @@ nickname.addEventListener('keydown', function(e) {
   }
 });
 
-save.addEventListener('click', function() {
+saveButton.addEventListener('click', function() {
   requestNicknameUpdate();
-});
-
-nickname.addEventListener("input", function () {
-  if (nickname.value && nickname.value != storedNickname) {
-    showSaveButton();
-  } else {
-    hideSaveButton();
-  }
 });
 
 numUsersOnlineInfo.addEventListener("click", function () {
@@ -105,12 +97,14 @@ socket.on('typing data', function(data) {
 });   
 
 socket.on('nickname assign', function(newNickname) {
-  nickname.value = newNickname;
-  hideSaveButton();
+  nicknameWrapper.style.display = 'none';
+  mainChat.style.display = 'block';
 });
 
-socket.on('clear messages', function(msg) {
-  messages.innerHTML = '';
+socket.on('reset chat', function(msg) {
+  clearMessages();
+  mainChat.style.display = 'none';
+  nicknameWrapper.style.display = 'flex';
 });
 
 socket.on('welcome message', function(msg) {
@@ -167,6 +161,10 @@ function populateOnlineUsersInfo(data) {
   } else {
     userList.style.overflowY = 'scroll';
   }
+}
+
+function clearMessages() {
+  messages.innerHTML = '';
 }
 
 function requestNicknameUpdate() {
